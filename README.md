@@ -172,8 +172,8 @@ untuk sharing folder dan rolenya
 ```
 root@nas:/# cat /etc/samba/smb.conf
 [global]
-  workgroup = PTR
-  realm = PTR.local
+  workgroup = ptr
+  realm = ptr.local
   #realm = nas3    
   security = ads
   unix extensions = No
