@@ -38,8 +38,8 @@ nano /etc/hostname
 ```
 contoh 
 ```
-root@nas5:/# cat /etc/hostname 
-nas5
+root@nas:/# cat /etc/hostname 
+nas
 
 
 ```
@@ -52,11 +52,11 @@ nano /etc/hosts
 
 contoh :
 ```
-root@nas5:/# cat /etc/hosts
+root@nas:/# cat /etc/hosts
 127.0.0.1 localhost
-127.0.1.1 nas5.kop.local nas5
-192.168.88.40 nas5.kop.local nas5
-192.168.88.2 maindc.kop.local maindc
+127.0.1.1 nas.ptr.local nas
+192.168.88.40 nas.ptr.local nas
+192.168.88.2 maindc.ptr.local maindc
 
 # The following lines are desirable for IPv6 capable hosts
 ::1     ip6-localhost ip6-loopback
@@ -75,9 +75,9 @@ nano /etc/resolv.conf
 
 isinya:
 ```
-root@nas5:/# cat /etc/resolv.conf
+root@nas:/# cat /etc/resolv.conf
 nameserver 192.168.88.2
-search kop.local
+search PTR.local
 
 
 ```
@@ -92,7 +92,7 @@ nano /etc/netplan/00-installer-config.yaml
 contooh 
 ```
 
-root@nas5:/# cat /etc/netplan/00-installer-config.yaml 
+root@nas:/# cat /etc/netplan/00-installer-config.yaml 
 # This is the network config written by 'subiquity'
 network:
   ethernets:
@@ -101,7 +101,7 @@ network:
       addresses: [192.168.88.40/24]
       gateway4: 192.168.88.1
       nameservers:
-                   search: [KOP.LOCAL]
+                   search: [PTR.LOCAL]
                    addresses: [192.168.88.2]
 
   version: 2
@@ -112,14 +112,14 @@ network:
 ## Setting krb5.conf
 agar dapat melakukan join domain, perlu configurasi krb5 (kerberos) 
 ```
-root@nas5:/# cat /etc/krb5.conf
+root@nas:/# cat /etc/krb5.conf
 [logging]
 default = FILE:/var/log/krb5libs.log
 kdc = FILE:/var/log/krb5kdc.log
 admin_server = FILE:/var/log/kadmind.log
 
 [libdefaults]
-default_realm = MAINDC.KOP.LOCAL
+default_realm = MAINDC.PTR.LOCAL
 dns_lookup_realm = false
 dns_lookup_kdc = false
 ticket_lifetime = 24h
@@ -127,25 +127,25 @@ renew_lifetime = 7d
 forwardable = true
 
 [realms]
-  MAINDC.KOP.LOCAL = {
-    kdc = KOP.LOCAL
-    admin_server = maindc.kop.local
+  MAINDC.PTR.LOCAL = {
+    kdc = PTR.LOCAL
+    admin_server = maindc.ptr.local
   }
-  KOP.LOCAL = {
-    kdc = maindc.kop.local
-    admin_server = maindc.kop.local
+  PTR.LOCAL = {
+    kdc = maindc.PTR.local
+    admin_server = maindc.ptr.local
   }
 
 [domain_realm]
-.kop.local = KOP.LOCAL
-kop.local = KOP.LOCAL
+.ptr.local = PTR.LOCAL
+ptr.local = PTR.LOCAL
 
 
 ```
 ## Setting nsswitch.conf
 setelah join , dan agar linux dapat membaca member domain, perlu setting nsswitch
 ```
-root@nas5:/# cat /etc/nsswitch.conf 
+root@nas:/# cat /etc/nsswitch.conf 
 # /etc/nsswitch.conf
 #
 # Example configuration of GNU Name Service Switch functionality.
@@ -170,10 +170,10 @@ netgroup:       nis
 ## Setting smb.conf
 untuk sharing folder dan rolenya
 ```
-root@nas5:/# cat /etc/samba/smb.conf
+root@nas:/# cat /etc/samba/smb.conf
 [global]
-  workgroup = KOP
-  realm = kop.local
+  workgroup = PTR
+  realm = PTR.local
   #realm = nas3    
   security = ads
   unix extensions = No
@@ -199,7 +199,7 @@ root@nas5:/# cat /etc/samba/smb.conf
 [edp]
     comment = edp
     path = /edp
-    valid users = "@KOP\Domain Users"
+    valid users = "@PTR\Domain Users"
     force group = "domain users"
     writable = yes
     read only = no
@@ -216,7 +216,7 @@ root@nas5:/# cat /etc/samba/smb.conf
 ## kinit
 inisialisasi akun admin domain
 ```
-kinit administrator@KOP.LOCAL
+kinit administrator@PTR.LOCAL
 ```
 ## klist
 pembuatan temporary data
@@ -226,12 +226,12 @@ klist
 ## Join Domain
 proses join domain
 ```
-net ads join KOP.LOCAL -U administrator@KOP.LOCAL
+net ads join PTR.LOCAL -U administrator@PTR.LOCAL
 ```
 ## restart samba dan componentnya
 agar setting join domain dapat dibaca samba
 ```
-root@nas5:/# systemctl restart smbd nmbd winbind
+root@nas:/# systemctl restart smbd nmbd winbind
 ```
 ## Test Domain
 test menggunakan 2 scrpit berikut , jika mucul , maka berhasil
@@ -240,8 +240,8 @@ wbinfo -u
 ```
 dan
 ```
-root@nas5:/# getent passwd | grep "administrator"
-administrator:*:100171:100006::/home/KOP/administrator:/bin/false
+root@nas:/# getent passwd | grep "administrator"
+administrator:*:100171:100006::/home/PTR/administrator:/bin/false
 
 ```
 
