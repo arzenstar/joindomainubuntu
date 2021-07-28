@@ -329,3 +329,6 @@ Update the DNS entries:
 ```
 
 ## [source wiki.samba.org](https://wiki.samba.org/index.php/Changing_the_IP_Address_of_a_Samba_AD_DC)
+## [source wiki.samba.org 2](https://wiki.samba.org/index.php/Transferring_and_Seizing_FSMO_Roles#Displaying_the_Current_FSMO_Role_Owners)
+## [source tecmint.com](https://www.tecmint.com/join-additional-ubuntu-dc-to-samba4-ad-dc-failover-replication/)
+## [source tecmint.com 2](https://www.tecmint.com/samba4-ad-dc-sysvol-replication/)
